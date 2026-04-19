@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export interface IImage {
-    fileName: string, 
+    fileName: string,
     originalName: string,
 }
 
@@ -13,41 +13,37 @@ export interface IProduct {
     price: number | null,
 }
 
-// title — название товара, строка от 2 до 30 символов, обязательное поле, уникальное.
-// image — путь до файла и метаинформация об изображении, объект вида { fileName: string, originalName: string; }, обязательно поле.
-// category — категория товара, строка, обязательное поле.
-// description — описание товара, строка, необязательное поле.
-// price — цена товара, число, необязательное поле, по умолчанию null.
-
 const imageSchema = new mongoose.Schema<IImage>({
-    fileName: {
-        type: String,
-        required: true,
-    },
-    originalName: {
-        type: String,
-        required: true,
-    }
-})
-
-const productSchema = new mongoose.Schema<IProduct>({
-    title: {
-        type: String,
-        required: true,
-        minlength: 2,
-        maxlength: 30,
-    },
-    image: imageSchema,
-    category: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-    },
-    price: {
-        type: Number,
-    }
+  fileName: {
+    type: String,
+    required: [true, 'Имя файла является обязательным полем'],
+  },
+  originalName: {
+    type: String,
+    required: [true, 'Оригинальное имя файла является обязательным полем'],
+  },
 });
 
-export default mongoose.model<IProduct>('product', productSchema); 
+const productSchema = new mongoose.Schema<IProduct>({
+  title: {
+    type: String,
+    required: [true, 'Название продукта является обязательным полем'],
+    unique: true,
+    minlength: [2, 'Название продукта должны быть длиннее 2-х символов'],
+    maxlength: [30, 'Название продукта должны быть не длиннее 30-ти символов'],
+  },
+  image: imageSchema,
+  category: {
+    type: String,
+    required: [true, 'Категория продукта является обязательным полем'],
+  },
+  description: {
+    type: String,
+  },
+  price: {
+    type: Number,
+    min: [0, 'Цена не может быть отрицательной'],
+  },
+});
+
+export default mongoose.model<IProduct>('product', productSchema);
