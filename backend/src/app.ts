@@ -8,7 +8,8 @@ import { errorLogger, requestLogger } from './middlewares/logger';
 
 const app = express();
 
-mongoose.connect ('mongodb://127.0.0.1:27017/weblarek');
+const mongoAddress = process.env.DB_ADDRESS || 'mongodb://127.0.0.1:27017/weblarek';
+mongoose.connect(mongoAddress);
 
 app.use(cors());
 app.use(json());
